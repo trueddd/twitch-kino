@@ -91,7 +91,7 @@ external interface QueryInfo {
      * Note that fragment identifiers are not matched.
      * Note that this property is ignored if the extension doesn't have the "tabs" permission.
      */
-    var url: String? //TODO string or array of string (optional)
+    var url: String?
 
     /** The ID of the parent window, or windows.WINDOW_ID_CURRENT for the current window. */
     var windowId: Int?
