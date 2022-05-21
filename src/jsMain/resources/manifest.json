@@ -20,10 +20,6 @@
     "48": "icons/peepoGlad48.png",
     "128": "icons/peepoGlad128.png"
   },
-  "host_permissions": [
-    "*://*.twitch.tv/*",
-    "https://api2.goodgame.ru/*"
-  ],
   "action": {
     "default_icon": "icons/peepoGlad128.png",
     "default_popup": "index.html",

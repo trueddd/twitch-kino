@@ -1,5 +1,4 @@
 import kotlinx.browser.document
-import org.w3c.dom.Element
 import org.w3c.dom.HTMLIFrameElement
 import org.w3c.dom.HTMLVideoElement
 
@@ -15,22 +14,23 @@ private fun hideTwitchPlayer() {
 
 private fun createIframe(src: String): HTMLIFrameElement? {
     val frame = document.createElement("iframe") as? HTMLIFrameElement ?: return null
+    frame.id = "twitch-kino-iframe"
     frame.src = src
     frame.allowFullscreen = true
     frame.classList.add("video-ref")
     return frame
 }
 
-private fun Element.removeIframe() {
-    val iframe = getElementsByTagName("iframe").firstOrNull() ?: return
-    removeChild(iframe)
+private fun removeIframe() {
+    val iframe = document.getElementById("twitch-kino-iframe") ?: return
+    iframe.parentNode?.removeChild(iframe)
 }
 
 fun setupPlayer(url: String) {
     val frame = createIframe(url) ?: return
     val twitchPlayerContainer = document.getElementsByClassName("video-player__container--resize-calc")
         .firstOrNull() ?: return
-    twitchPlayerContainer.removeIframe()
+    removeIframe()
     hideTwitchPlayer()
     twitchPlayerContainer.appendChild(frame)
 }
@@ -38,7 +38,7 @@ fun setupPlayer(url: String) {
 fun restoreTwitchPlayer() {
     val twitchPlayerContainer = document.getElementsByClassName("video-player__container--resize-calc")
         .firstOrNull() ?: return
-    twitchPlayerContainer.removeIframe()
+    removeIframe()
     twitchPlayerContainer.children.forEach {
         it.style.display = "block"
     }
