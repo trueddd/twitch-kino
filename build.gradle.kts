@@ -39,3 +39,13 @@ tasks.getByName("jsBrowserWebpack").apply {
         }
     }
 }
+
+tasks.register<Zip>("zipExtension") {
+    archiveFileName.set("${project.name}-${Config.Version}.zip")
+    from(layout.buildDirectory.dir("distributions"))
+    destinationDirectory.set(layout.buildDirectory)
+}
+
+tasks.register("buildAndZip") {
+    dependsOn("clean", "jsBrowserWebpack", "zipExtension")
+}

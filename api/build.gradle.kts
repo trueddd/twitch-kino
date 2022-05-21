@@ -1,5 +1,6 @@
 plugins {
     kotlin("multiplatform") version Versions.Kotlin
+    kotlin("plugin.serialization") version Versions.Kotlin
 }
 
 group = Config.PackageName
@@ -21,6 +22,7 @@ kotlin {
             dependencies {
                 implementation(jsStdlib)
                 implementation(coroutines)
+                implementation(ktorSerialization)
             }
         }
     }

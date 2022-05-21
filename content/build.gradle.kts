@@ -18,6 +18,9 @@ kotlin {
         binaries.executable()
     }
     sourceSets {
+        all {
+            languageSettings.optIn("kotlin.RequiresOptIn")
+        }
         val jsMain by getting {
             dependencies {
                 implementation(jsStdlib)
