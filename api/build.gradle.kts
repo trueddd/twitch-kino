@@ -22,8 +22,6 @@ kotlin {
             dependencies {
                 implementation(jsStdlib)
                 implementation(coroutines)
-                implementation(ktorClientCore)
-                implementation(ktorContentNegotiation)
                 implementation(ktorSerialization)
             }
         }

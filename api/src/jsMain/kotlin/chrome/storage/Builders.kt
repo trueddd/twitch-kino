@@ -17,7 +17,6 @@ fun StorageArea.playerChangedFlow(): Flow<Player> {
     return callbackFlow {
         onChanged.addListener {
             val newPlayer = try { it[PLAYER_FIELD][STORAGE_NEW_VALUE_FIELD] as String } catch (e: Exception) { return@addListener }
-            console.log("new player: $newPlayer")
             val newPlayerData = newPlayer.split(Player.DELIMITER, limit = 2)
             val player = when (newPlayerData.first()) {
                 Player.Companion.Type.Wasd -> Player.Wasd(newPlayerData.last())

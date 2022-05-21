@@ -12,8 +12,6 @@ object HttpClient {
         prettyPrint = true
     }
 
-
-    // fixme
     suspend fun getGoodGameUserId(username: String): Result<Int> {
         return try {
             val response = window.fetch("https://api2.goodgame.ru/streams/$username")

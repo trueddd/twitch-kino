@@ -26,7 +26,10 @@ sealed class Player(
 
     data class GoodGame(override val username: String) : Player(username) {
 
-        override suspend fun provideIframeLink() = HttpClient.getGoodGameUserId(username).getOrThrow().toString()
+        override suspend fun provideIframeLink(): String {
+            val id = HttpClient.getGoodGameUserId(username).getOrThrow().toString()
+            return "https://goodgame.ru/player?$id"
+        }
 
         override fun toString() = "${Type.GoodGame}$DELIMITER$username"
     }

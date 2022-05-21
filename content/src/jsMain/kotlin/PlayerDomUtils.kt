@@ -1,8 +1,9 @@
 import kotlinx.browser.document
+import org.w3c.dom.Element
 import org.w3c.dom.HTMLIFrameElement
 import org.w3c.dom.HTMLVideoElement
 
-fun hideTwitchPlayer() {
+private fun hideTwitchPlayer() {
     val videoTags = document.getElementsByTagName("video")
     videoTags.forEach { (it as? HTMLVideoElement)?.pause() }
     val twitchPlayerContainer = document.getElementsByClassName("video-player__container--resize-calc")
@@ -12,7 +13,7 @@ fun hideTwitchPlayer() {
     }
 }
 
-fun createIframe(src: String): HTMLIFrameElement? {
+private fun createIframe(src: String): HTMLIFrameElement? {
     val frame = document.createElement("iframe") as? HTMLIFrameElement ?: return null
     frame.src = src
     frame.allowFullscreen = true
@@ -20,10 +21,16 @@ fun createIframe(src: String): HTMLIFrameElement? {
     return frame
 }
 
+private fun Element.removeIframe() {
+    val iframe = getElementsByTagName("iframe").firstOrNull() ?: return
+    removeChild(iframe)
+}
+
 fun setupPlayer(url: String) {
     val frame = createIframe(url) ?: return
     val twitchPlayerContainer = document.getElementsByClassName("video-player__container--resize-calc")
         .firstOrNull() ?: return
+    twitchPlayerContainer.removeIframe()
     hideTwitchPlayer()
     twitchPlayerContainer.appendChild(frame)
 }
@@ -31,8 +38,7 @@ fun setupPlayer(url: String) {
 fun restoreTwitchPlayer() {
     val twitchPlayerContainer = document.getElementsByClassName("video-player__container--resize-calc")
         .firstOrNull() ?: return
-    val iframe = twitchPlayerContainer.getElementsByTagName("iframe").firstOrNull() ?: return
-    twitchPlayerContainer.removeChild(iframe)
+    twitchPlayerContainer.removeIframe()
     twitchPlayerContainer.children.forEach {
         it.style.display = "block"
     }

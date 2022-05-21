@@ -13,7 +13,6 @@ fun main(vararg args: String) {
         playerChangedFlow()
             .onStart { setPlayer(Player.Twitch) }
             .onEach { player ->
-                console.log("Player change confirm: $player")
                 val url = player.provideIframeLink()
                 when (player) {
                     is Player.Twitch -> restoreTwitchPlayer()
