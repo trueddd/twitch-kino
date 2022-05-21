@@ -26,7 +26,7 @@ jobs:
       - name: Build and Zip extension
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: buildAndZip
+          arguments: zipExtension
       - uses: actions/upload-artifact@v3
         name: Upload Zip to Github Packages
         with:
