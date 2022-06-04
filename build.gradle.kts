@@ -1,3 +1,5 @@
+import tasks.manifest.ExtensionManifestBuilderTask
+
 plugins {
     kotlin("multiplatform") version Versions.Kotlin
     id("org.jetbrains.compose") version Versions.Compose
@@ -30,8 +32,12 @@ kotlin {
     }
 }
 
-tasks.getByName("jsBrowserWebpack").apply {
-    dependsOn(":content:jsBrowserWebpack")
+val updateManifest = tasks.register<ExtensionManifestBuilderTask>("updateManifest") {
+    outputFile.set(File(buildDir, "distributions/manifest.json"))
+}
+
+val buildWebpack = tasks.getByName("jsBrowserWebpack").apply {
+    dependsOn(":content:jsBrowserWebpack", updateManifest)
     doLast {
         copy {
             from("content/build/distributions/content.js")
@@ -41,7 +47,7 @@ tasks.getByName("jsBrowserWebpack").apply {
 }
 
 tasks.register<Zip>("zipExtension") {
-    dependsOn("jsBrowserWebpack")
+    dependsOn(buildWebpack)
     archiveFileName.set("${project.name}-${Config.Version}.zip")
     from(layout.buildDirectory.dir("distributions"))
     destinationDirectory.set(layout.buildDirectory)

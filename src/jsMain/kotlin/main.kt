@@ -129,7 +129,7 @@ fun Popup() {
     }
 }
 
-fun main(args: Array<String>) {
+fun main() {
     renderComposable(rootElementId = "root") {
         Popup()
     }

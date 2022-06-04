@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 
 @OptIn(DelicateCoroutinesApi::class)
-fun main(vararg args: String) {
+fun main() {
     with(chrome.storage.sync) {
         playerChangedFlow()
             .onStart { setPlayer(Player.Twitch) }
