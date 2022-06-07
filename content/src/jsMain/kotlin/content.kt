@@ -1,24 +1,18 @@
-import chrome.storage.playerChangedFlow
-import chrome.storage.setPlayer
+import chrome.runtime.playerEventsFlow
 import data.Player
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 
 @OptIn(DelicateCoroutinesApi::class)
 fun main() {
-    with(chrome.storage.sync) {
-        playerChangedFlow()
-            .onStart { setPlayer(Player.Twitch) }
-            .onEach { player ->
-                val url = player.provideIframeLink()
-                when (player) {
-                    is Player.Twitch -> restoreTwitchPlayer()
-                    else -> setupPlayer(url)
-                }
+    chrome.runtime.onMessage.playerEventsFlow()
+        .onEach { player ->
+            when (player) {
+                is Player.Twitch -> restoreTwitchPlayer()
+                else -> setupPlayer(player.provideIframeLink())
             }
-            .launchIn(GlobalScope)
-    }
+        }
+        .launchIn(GlobalScope)
 }

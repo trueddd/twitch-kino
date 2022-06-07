@@ -12,6 +12,8 @@ data class Manifest(
     @SerialName("manifest_version")
     val manifestVersion: Int = 3,
     val permissions: List<String>,
+    @SerialName("host_permissions")
+    val hostPermissions: List<String>? = null,
     val icons: Map<String, String>,
     val action: ManifestAction,
     @SerialName("content_scripts")

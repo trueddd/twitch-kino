@@ -1,4 +1,4 @@
-import tasks.manifest.ExtensionManifestBuilderTask
+import tasks.manifest.*
 
 plugins {
     kotlin("multiplatform") version Versions.Kotlin
@@ -33,7 +33,29 @@ kotlin {
 }
 
 val updateManifest = tasks.register<ExtensionManifestBuilderTask>("updateManifest") {
-    outputFile.set(File(buildDir, "distributions/manifest.json"))
+    outputFile = File(buildDir, "distributions/manifest.json")
+    val iconsResolutions = listOf(16, 32, 48, 128)
+    val extensionName = when (System.getenv("TEST")?.toString()) {
+        "true" -> "${Config.Name} Test"
+        else -> Config.Name
+    }
+    manifest = Manifest(
+        name = extensionName,
+        description = "Extension for integrating streams into Twitch page.",
+        permissions = listOf("storage", "tabs"),
+        contentScripts = listOf(
+            ContentScript(
+                matches = listOf("*://*.twitch.tv/*"),
+                js = listOf("content.js"),
+            ),
+        ),
+        icons = iconsResolutions.associate { it.toString() to "icons/peepoGlad$it.png" },
+        action = ManifestAction(
+            icon = "icons/peepoGlad${iconsResolutions.last()}.png",
+            popup = "index.html",
+            title = extensionName,
+        ),
+    )
 }
 
 val buildWebpack = tasks.getByName("jsBrowserWebpack").apply {
