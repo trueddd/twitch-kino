@@ -4,6 +4,7 @@ import utils.HttpClient
 
 sealed class Player(
     open val username: String,
+    val type: String,
 ) {
 
     companion object {
@@ -17,27 +18,27 @@ sealed class Player(
 
     abstract suspend fun provideIframeLink(): String
 
-    data class Wasd(override val username: String) : Player(username) {
+    data class Wasd(override val username: String) : Player(username, Type.Wasd) {
 
         override suspend fun provideIframeLink() = "https://wasd.tv/embed/${username}"
 
-        override fun toString() = "${Type.Wasd}$DELIMITER$username"
+        override fun toString() = "$type$DELIMITER$username"
     }
 
-    data class GoodGame(override val username: String) : Player(username) {
+    data class GoodGame(override val username: String) : Player(username, Type.GoodGame) {
 
         override suspend fun provideIframeLink(): String {
             val id = HttpClient.getGoodGameUserId(username).getOrThrow().toString()
             return "https://goodgame.ru/player?$id"
         }
 
-        override fun toString() = "${Type.GoodGame}$DELIMITER$username"
+        override fun toString() = "$type$DELIMITER$username"
     }
 
-    object Twitch : Player("") {
+    object Twitch : Player("", Type.Twitch) {
 
         override suspend fun provideIframeLink() = ""
 
-        override fun toString() = Type.Twitch
+        override fun toString() = type
     }
 }

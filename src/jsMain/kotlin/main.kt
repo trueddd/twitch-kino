@@ -2,7 +2,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import chrome.storage.setPlayer
+import chrome.runtime.TYPE_FIELD
+import chrome.runtime.USERNAME_FIELD
+import chrome.storage.sync
+import chrome.tabs.query
+import chrome.tabs.sendMessage
 import data.Player
 import kotlinx.coroutines.await
 import org.jetbrains.compose.web.css.*
@@ -15,7 +19,7 @@ fun Popup() {
     val wasdChannel = remember { mutableStateOf("") }
     val goodGameChannel = remember { mutableStateOf("") }
     LaunchedEffect(Unit) {
-        val storage = chrome.storage.sync.get(null).await()
+        val storage = sync.get(null).await()
         (storage[Player.Companion.Type.Wasd] as? String)?.let { wasdChannel.value = it }
         (storage[Player.Companion.Type.GoodGame] as? String)?.let { goodGameChannel.value = it }
     }
@@ -51,7 +55,7 @@ fun Popup() {
                     onInput {
                         console.log("wasd changed: ${it.value}")
                         wasdChannel.value = it.value
-                        chrome.storage.sync.set(json(Player.Companion.Type.Wasd to it.value))
+                        sync.set(json(Player.Companion.Type.Wasd to it.value))
                     }
                 }
             )
@@ -61,9 +65,7 @@ fun Popup() {
                         whiteSpace("nowrap")
                         textAlign("center")
                     }
-                    onClick {
-                        chrome.storage.sync.setPlayer(Player.Wasd(wasdChannel.value))
-                    }
+                    onClick { changePlayer(Player.Wasd(wasdChannel.value)) }
                 }
             ) {
                 Text("Change player")
@@ -92,7 +94,7 @@ fun Popup() {
                     }
                     onInput {
                         goodGameChannel.value = it.value
-                        chrome.storage.sync.set(json(Player.Companion.Type.GoodGame to it.value))
+                        sync.set(json(Player.Companion.Type.GoodGame to it.value))
                     }
                 }
             )
@@ -102,9 +104,7 @@ fun Popup() {
                         whiteSpace("nowrap")
                         textAlign("center")
                     }
-                    onClick {
-                        chrome.storage.sync.setPlayer(Player.GoodGame(goodGameChannel.value))
-                    }
+                    onClick { changePlayer(Player.GoodGame(goodGameChannel.value)) }
                 }
             ) {
                 Text("Change player")
@@ -120,7 +120,7 @@ fun Popup() {
         ) {
             Button(
                 attrs = {
-                    onClick { chrome.storage.sync.setPlayer(Player.Twitch) }
+                    onClick { changePlayer(Player.Twitch) }
                 }
             ) {
                 Text("Restore Twitch player")
@@ -129,7 +129,14 @@ fun Popup() {
     }
 }
 
-fun main(args: Array<String>) {
+private fun changePlayer(player: Player) {
+    query { active = true }
+        .then { it.first() }
+        .then { sendMessage(it.id, json(TYPE_FIELD to player.type, USERNAME_FIELD to player.username)) }
+        .catch { console.error(it) }
+}
+
+fun main() {
     renderComposable(rootElementId = "root") {
         Popup()
     }
