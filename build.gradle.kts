@@ -34,6 +34,12 @@ kotlin {
 
 val updateManifest = tasks.register<ExtensionManifestBuilderTask>("updateManifest") {
     outputFile = File(buildDir, "distributions/manifest.json")
+        .also {
+            if (!it.exists()) {
+                it.parentFile.mkdirs()
+                it.createNewFile()
+            }
+        }
     val iconsResolutions = listOf(16, 32, 48, 128)
     val extensionName = when (System.getenv("TEST")?.toString()) {
         "true" -> "${Config.Name} Test"
