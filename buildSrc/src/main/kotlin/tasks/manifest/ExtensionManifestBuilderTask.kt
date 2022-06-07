@@ -30,6 +30,8 @@ abstract class ExtensionManifestBuilderTask : DefaultTask() {
     @TaskAction
     fun build() {
         val manifestJson = json.encodeToString(manifest)
-        outputFile.writeText(manifestJson)
+        outputFile
+            .also { if (!it.exists()) it.createNewFile() }
+            .writeText(manifestJson)
     }
 }
