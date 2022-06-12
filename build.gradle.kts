@@ -42,7 +42,7 @@ val updateManifest = tasks.register<ExtensionManifestBuilderTask>("updateManifes
     manifest = Manifest(
         name = extensionName,
         description = "Extension for integrating streams into Twitch page.",
-        permissions = listOf("storage", "tabs"),
+        permissions = listOf("storage", "activeTab"),
         contentScripts = listOf(
             ContentScript(
                 matches = listOf("*://*.twitch.tv/*"),
