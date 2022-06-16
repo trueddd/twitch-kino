@@ -1,16 +1,82 @@
 package ui
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import changePlayer
+import androidx.compose.runtime.*
 import chrome.storage.getExtensionStorage
 import chrome.storage.savePlayer
 import chrome.storage.sync
 import data.Player
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.dom.*
+import org.jetbrains.compose.web.dom.Div
+import org.jetbrains.compose.web.dom.Text
+import org.jetbrains.compose.web.dom.TextArea
+import utils.changePlayer
+
+@Composable
+fun PlayerRow(
+    playerType: Player.Type,
+    channelState: MutableState<String>,
+) {
+    Div(
+        attrs = {
+            style {
+                display(DisplayStyle.Flex)
+                flexDirection(FlexDirection.Row)
+                justifyContent(JustifyContent.FlexEnd)
+                alignItems(AlignItems.Center)
+            }
+        }
+    ) {
+        Div(
+            attrs = {
+                style {
+                    fontSize(16.px)
+                    property("margin-right", "auto")
+                }
+            }
+        ) {
+            Text(playerType.name)
+        }
+        TextArea(
+            value = channelState.value,
+            attrs = {
+                style {
+                    property("resize", "none")
+                    height(20.px)
+                    marginLeft(10.px)
+                    marginRight(10.px)
+                }
+                onInput {
+                    console.log("$playerType changed: ${it.value}")
+                    channelState.value = it.value
+                    sync.savePlayer(Player.Wasd(it.value))
+                }
+            }
+        )
+        Button(
+            text = "Change",
+            onClick = { changePlayer(Player.create(playerType, channelState.value)) },
+        )
+    }
+}
+
+@Composable
+fun TwitchRow() {
+    Div(
+        attrs = {
+            style {
+                display(DisplayStyle.Flex)
+                flexDirection(FlexDirection.Row)
+                justifyContent(JustifyContent.FlexEnd)
+                alignItems(AlignItems.Center)
+            }
+        }
+    ) {
+        Button(
+            text = "Restore Twitch player",
+            onClick = { changePlayer(Player.Twitch) }
+        )
+    }
+}
 
 @Composable
 fun Popup() {
@@ -21,108 +87,20 @@ fun Popup() {
         wasdChannel.value = storage.wasdChannel ?: ""
         goodGameChannel.value = storage.goodGameChannel ?: ""
     }
+
     Div(
         attrs = {
             style {
                 display(DisplayStyle.Flex)
                 flexDirection(FlexDirection.Column)
+                backgroundColor(Colors.Background)
+                gap(8.px)
+                padding(8.px)
             }
         }
     ) {
-        Div(
-            attrs = {
-                style {
-                    display(DisplayStyle.Flex)
-                    flexDirection(FlexDirection.Row)
-                    alignItems(AlignItems.Center)
-                }
-            }
-        ) {
-            P {
-                Text("WASD")
-            }
-            TextArea(
-                value = wasdChannel.value,
-                attrs = {
-                    style {
-                        property("resize", "none")
-                        height(20.px)
-                        marginLeft(10.px)
-                        marginRight(10.px)
-                    }
-                    onInput {
-                        console.log("wasd changed: ${it.value}")
-                        wasdChannel.value = it.value
-                        sync.savePlayer(Player.Wasd(it.value))
-                    }
-                }
-            )
-            Button(
-                attrs = {
-                    style {
-                        whiteSpace("nowrap")
-                        textAlign("center")
-                    }
-                    onClick { changePlayer(Player.Wasd(wasdChannel.value)) }
-                }
-            ) {
-                Text("Change player")
-            }
-        }
-        Div(
-            attrs = {
-                style {
-                    display(DisplayStyle.Flex)
-                    flexDirection(FlexDirection.Row)
-                    alignItems(AlignItems.Center)
-                }
-            }
-        ) {
-            P {
-                Text("GG")
-            }
-            TextArea(
-                value = goodGameChannel.value,
-                attrs = {
-                    style {
-                        property("resize", "none")
-                        height(20.px)
-                        marginLeft(10.px)
-                        marginRight(10.px)
-                    }
-                    onInput {
-                        goodGameChannel.value = it.value
-                        sync.savePlayer(Player.GoodGame(it.value))
-                    }
-                }
-            )
-            Button(
-                attrs = {
-                    style {
-                        whiteSpace("nowrap")
-                        textAlign("center")
-                    }
-                    onClick { changePlayer(Player.GoodGame(goodGameChannel.value)) }
-                }
-            ) {
-                Text("Change player")
-            }
-        }
-        Div(
-            attrs = {
-                style {
-                    display(DisplayStyle.Flex)
-                    flexDirection(FlexDirection.Row)
-                }
-            }
-        ) {
-            Button(
-                attrs = {
-                    onClick { changePlayer(Player.Twitch) }
-                }
-            ) {
-                Text("Restore Twitch player")
-            }
-        }
+        PlayerRow(Player.Type.Wasd, wasdChannel)
+        PlayerRow(Player.Type.GoodGame, goodGameChannel)
+        TwitchRow()
     }
 }

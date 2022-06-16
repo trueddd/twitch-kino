@@ -30,9 +30,9 @@ fun OnMessageEvents.playerEventsFlow(): Flow<Player> {
         }
         .mapNotNull { (player, username) ->
             when (player) {
-                Player.Companion.Type.Wasd -> Player.Wasd(username)
-                Player.Companion.Type.GoodGame -> Player.GoodGame(username)
-                Player.Companion.Type.Twitch -> Player.Twitch
+                Player.Type.Wasd.toString() -> Player.Wasd(username)
+                Player.Type.GoodGame.toString() -> Player.GoodGame(username)
+                Player.Type.Twitch.toString() -> Player.Twitch
                 else -> null
             }
         }
