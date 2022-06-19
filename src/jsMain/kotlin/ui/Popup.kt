@@ -8,7 +8,6 @@ import data.Player
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
-import org.jetbrains.compose.web.dom.TextArea
 import utils.changePlayer
 
 @Composable
@@ -38,18 +37,10 @@ fun PlayerRow(
         }
         TextArea(
             value = channelState.value,
-            attrs = {
-                style {
-                    property("resize", "none")
-                    height(20.px)
-                    marginLeft(10.px)
-                    marginRight(10.px)
-                }
-                onInput {
-                    console.log("$playerType changed: ${it.value}")
-                    channelState.value = it.value
-                    sync.savePlayer(Player.Wasd(it.value))
-                }
+            onValueChanged = {
+                console.log("$playerType changed: $it")
+                channelState.value = it
+                sync.savePlayer(Player.Wasd(it))
             }
         )
         Button(

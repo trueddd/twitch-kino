@@ -23,11 +23,11 @@ fun Button(
                     color = Colors.Accent
                     width = 1.px
                 }
-                padding(2.px)
+                padding(4.px)
                 backgroundColor(if (hovered.value) Colors.Primary else Colors.Background)
                 borderRadius(4.px)
                 fontSize(14.px)
-                color(Colors.Accent)
+                color(if (hovered.value) Color.white else Colors.Accent)
             }
             onMouseOver { hovered.value = true }
             onMouseLeave { hovered.value = false }
