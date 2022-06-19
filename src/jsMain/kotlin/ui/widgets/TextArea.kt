@@ -1,4 +1,4 @@
-package ui
+package ui.widgets
 
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.web.attributes.InputType

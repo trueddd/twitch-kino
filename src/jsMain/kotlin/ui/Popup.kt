@@ -7,7 +7,9 @@ import chrome.storage.sync
 import data.Player
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
-import org.jetbrains.compose.web.dom.Text
+import ui.widgets.Button
+import ui.widgets.PlatformIcon
+import ui.widgets.TextArea
 import utils.changePlayer
 
 @Composable
@@ -25,16 +27,7 @@ fun PlayerRow(
             }
         }
     ) {
-        Div(
-            attrs = {
-                style {
-                    fontSize(16.px)
-                    property("margin-right", "auto")
-                }
-            }
-        ) {
-            Text(playerType.name)
-        }
+        PlatformIcon(playerType)
         TextArea(
             value = channelState.value,
             onValueChanged = {
