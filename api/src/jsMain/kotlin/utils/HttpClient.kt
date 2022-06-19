@@ -1,8 +1,10 @@
 package utils
 
-import data.GoodGameStream
+import data.GoodGameChannel
 import kotlinx.browser.window
 import kotlinx.coroutines.await
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 
 object HttpClient {
@@ -14,12 +16,15 @@ object HttpClient {
 
     suspend fun getGoodGameUserId(username: String): Result<Int> {
         return try {
-            val response = window.fetch("https://api2.goodgame.ru/streams/$username")
+            val response = window.fetch("https://goodgame.ru/api/getchannelstatus?id=$username&fmt=json")
                 .await()
                 .text()
                 .await()
-                .let { json.decodeFromString(GoodGameStream.serializer(), it) }
-            Result.success(response.channel.id)
+                .let {
+                    val serializer = MapSerializer(String.serializer(), GoodGameChannel.serializer())
+                    json.decodeFromString(serializer, it)
+                }
+            Result.success(response.values.first().id)
         } catch (e: Exception) {
             console.error(e)
             Result.failure(e)
