@@ -4,15 +4,30 @@ import utils.HttpClient
 
 sealed class Player(
     open val username: String,
-    val type: String,
+    val type: Type,
 ) {
 
+    sealed class Type(val name: String) {
+
+        override fun toString(): String {
+            return name.lowercase()
+        }
+
+        object Wasd : Type("Wasd")
+        object GoodGame : Type("GoodGame")
+        object Twitch : Type("Twitch")
+    }
+
     companion object {
+
         const val DELIMITER = "|"
-        object Type {
-            const val Wasd = "wasd"
-            const val GoodGame = "goodgame"
-            const val Twitch = "twitch"
+
+        fun create(type: Type, username: String): Player {
+            return when (type) {
+                is Type.Wasd -> Wasd(username)
+                is Type.GoodGame -> GoodGame(username)
+                is Type.Twitch -> Twitch
+            }
         }
     }
 
@@ -39,6 +54,6 @@ sealed class Player(
 
         override suspend fun provideIframeLink() = ""
 
-        override fun toString() = type
+        override fun toString() = type.name
     }
 }
